@@ -11,11 +11,21 @@
 </head>
 <body ng-controller="Main">
   <section class="map map-{{map.name}}" ng-repeat="map in maps">
-    <div id="tiles">
-      <div class="tile" ng-repeat="tile in map.tiles">
-        <img ng-src="/images/tile-{{tile.src}}.jpg" alt="Tile" tl-rotate="{{tile.rotate}}">
+    <div id="tiles" ui-sortable="sortableOptions" tl-sortable ng-model="map.tiles">
+      <div class="tile" ng-repeat="tile in map.tiles track by $index">
+        <div class="rotate" tl-rotate="{{tile.rotate}}">
+          <i class="fa fa-repeat"></i>
+        </div>
+        <img ng-src="/images/tile-{{tile.src}}.jpg" alt="Tile" class="rotate{{tile.rotate}}deg">
+        <div class="source">
+          <i class="fa fa-anchor"></i>
+          <select tl-source>
+            <option value="{{option.num}}" ng-repeat="option in alltiles">{{option.name}}</option>
+          </select>
+        </div>
       </div>
     </div>
+    <button tl-add-tile class="btn btn-primary add-tile"><i class="fa fa-plus"></i></button>
   </section>
 </body>
 </html>
