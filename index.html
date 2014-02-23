@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" ng-app="dnd-tiles">
+<head>
+  <meta charset="UTF-8">
+  <title>Tiles</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/jquery.js"></script>
+  <script src="js/lib.js"></script>
+  <script src="js/angular.js"></script>
+  <script src="js/script.js"></script>
+</head>
+<body ng-controller="Main">
+  <section class="map map-{{map.name}}" ng-repeat="map in maps">
+    <div id="tiles">
+      <div class="tile" ng-repeat="tile in map.tiles">
+        <img ng-src="/images/tile-{{tile.src}}.jpg" alt="Tile" tl-rotate="{{tile.rotate}}">
+      </div>
+    </div>
+  </section>
+</body>
+</html>
