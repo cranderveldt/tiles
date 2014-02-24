@@ -1,30 +1,32 @@
 /*jQuery(document).ready(function(){
   
 });*/
+
 var Main = function ($scope) {
-  $scope.maps = [{ name: 'Default', tiles: [] }];
-  $.cookie.json = true;
+  $scope.maps = [{ name: 'Default', fog: false, tiles: [] }];
   $scope.alltiles = [
-    { name: "Left Turn", num: 1 }
-    , { name: "Right Turn", num: 2 }
-    , { name: "Straight", num: 3 }
-    , { name: "T", num: 4 }
-    , { name: "4 Corners", num: 5 }
-    , { name: "2 Corners", num: 6 }
-    , { name: "Pong Left", num: 7 }
-    , { name: "Pong Right", num: 8 }
-    , { name: "One wall", num: 9 }
-    , { name: "Two walls", num: 10 }
-    , { name: "Three Walls", num: 11 }
-    , { name: "White", num: 12 }
-    , { name: "Black", num: 13 }
+    { name: "White", num: 1 }
+    , { name: "Black", num: 2 }
+    , { name: "Left Turn", num: 3 }
+    , { name: "Right Turn", num: 4 }
+    , { name: "Straight", num: 5 }
+    , { name: "T", num: 6 }
+    , { name: "4 Corners", num: 7 }
+    , { name: "2 Corners", num: 8 }
+    , { name: "Pong Left", num: 9 }
+    , { name: "Pong Right", num: 10 }
+    , { name: "One wall", num: 11 }
+    , { name: "Two walls", num: 12 }
+    , { name: "Three Walls", num: 13 }
   ];
   $scope.initialize = function() {
-    var cookie = $.cookie('tiles');
-    if (cookie !== undefined) {
-      $scope.maps = cookie;
+    var data = localStorage.getItem('tiles');
+    if (data !== null) {
+      $scope.maps = JSON.parse(data);
+      // for (var i in $scope.maps[0].tiles) {
+      //   $scope.maps[0].tiles[i].flag = 'none';
+      // }
     }
-    
   };
   $scope.rotateClockwise = function(str) {
     var num = parseInt(str, 10);
@@ -34,9 +36,8 @@ var Main = function ($scope) {
       return num + 90;
     }
   };
-  
   $scope.saveMap = function() {
-    $.cookie('tiles', $scope.maps, { expires: 30, path: '/' });
+    localStorage.setItem('tiles', JSON.stringify($scope.maps));
   };
   $scope.nextSource = function(src) {
     if (src === $scope.alltiles.length) {
@@ -48,9 +49,8 @@ var Main = function ($scope) {
   $scope.addTile = function() {
     $scope.$apply(function() {
       $scope.maps[0].tiles.push({
-        src: '1', rotate: '0'
+        src: 1, rotate: 0
       });
-      $scope.saveMap();
     });
   };
   $scope.sortableOptions = {
@@ -104,6 +104,58 @@ app.directive('tlAddTile', function () {
       element.on('click', function(e) {
         $scope.addTile();
         $('#tiles').sortable("refresh");
+        $scope.saveMap();
+      });
+    }
+  };
+});
+app.directive('tlToggleGlobalFog', function () {
+  return {
+    replace: false,
+    transclude: false,
+    restrict: 'A',
+    scope: false,
+    link: function ($scope, element, attrs) {
+      element.on('click', function(e) {
+        $scope.$apply(function() {
+          $scope.map.fog = !$scope.map.fog;
+          $scope.saveMap();
+        });
+      });
+    }
+  };
+});
+app.directive('tlToggleFog', function () {
+  return {
+    replace: false,
+    transclude: false,
+    restrict: 'A',
+    scope: false,
+    link: function ($scope, element, attrs) {
+      element.on('click', function(e) {
+        var tileIndex = $('.tile').index(element.parent());
+        var fogStatus = $scope.maps[0].tiles[tileIndex].fog;
+        $scope.$apply(function() {
+          $scope.maps[0].tiles[tileIndex].fog = !fogStatus;
+        });
+        $scope.saveMap();
+      });
+    }
+  };
+});
+app.directive('tlSetFlag', function () {
+  return {
+    replace: false,
+    transclude: false,
+    restrict: 'A',
+    scope: false,
+    link: function ($scope, element, attrs) {
+      element.on('change', function(e) {
+        var tileIndex = $('.tile').index(element.parent().parent());
+        $scope.$apply(function() {
+          $scope.maps[0].tiles[tileIndex].flag = element.val();
+          $scope.saveMap();
+        });
       });
     }
   };

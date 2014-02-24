@@ -58,32 +58,70 @@ img {
     float: left;
     cursor: pointer;
     position: relative;
+    &.fog-true {
+      opacity: 0;
+    }
     img {
       display: block;
       position: relative;
       z-index: 0;
     }
-    .source, .rotate {
+    .action {
       position: absolute;
       cursor: pointer;
-      top: 5px;
+      top: 50%;
       color: #AAA;
       z-index: 1;
     }
     .source {
-      left: 5px;
-      select {
-        opacity: 0;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-      }
+      left: 50%;
+      margin-left: -20px;
+      margin-top: 5px;
+    }
+    select {
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
     }
     .rotate {
-      right: 5px;
+      right: 50%;
+      margin-right: -20px;
+      margin-top: 5px;
+    }
+    .fog {
+      left: 50%;
+      margin-top: -25px;
+      margin-left: -20px;
+      &.fog-false {
+        color: green;
+      }
+    }
+    .flag {
+      right: 50%;
+      margin-top: -25px;
+      margin-right: -20px;
+      &.flag-blue {
+        color: blue;
+      }
+      &.flag-red {
+        color: red;
+      }
+      &.flag-green {
+        color: green;
+      }
+      &.flag-orange {
+        color: orange;
+      }
+      &.flag-yellow {
+        color: yellow;
+      }
+      &.flag-purple {
+        color: purple;
+      }
     }
   }
 }
@@ -99,7 +137,7 @@ img {
 .rotate270deg {
   @include rotate(270deg);
 }
-.add-tile {
+.absolute-group {
   position: absolute;
   top: 0;
   left: 0;
