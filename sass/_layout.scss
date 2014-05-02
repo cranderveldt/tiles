@@ -123,6 +123,41 @@ img {
         color: purple;
       }
     }
+    .poi {
+      left: 50%;
+      margin-top: -12px;
+      margin-left: -5px;
+      &.poi-true {
+        color: yellow;
+      }
+    }
+  }
+}
+.legend {
+  @extend .clearfix;
+  width: 1000px;
+  margin: auto;
+  .marker {
+    float: left;
+    width: 100px;
+    height: 30px;
+    @include font-size(24, 1);
+    font-weight: bold;
+    padding: 3px 0;
+    text-align: center;
+  }
+}
+.axis {
+  position: absolute;
+  left: -40px;
+  top: 0;
+  .marker {
+    width: 40px;
+    height: 100px;
+    @include font-size(24, 1);
+    font-weight: bold;
+    padding: 38px 0;
+    text-align: center;
   }
 }
 .rotate0deg {

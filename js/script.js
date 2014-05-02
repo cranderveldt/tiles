@@ -1,10 +1,6 @@
-/*jQuery(document).ready(function(){
-  
-});*/
-
 var Main = function ($scope) {
   $scope.maps = [{ name: 'Default', fog: false, tiles: [] }];
-  $scope.alltiles = [
+  $scope.allTiles = [
     { name: "White", num: 1 }
     , { name: "Black", num: 2 }
     , { name: "Left Turn", num: 3 }
@@ -19,22 +15,33 @@ var Main = function ($scope) {
     , { name: "Two walls", num: 12 }
     , { name: "Three Walls", num: 13 }
   ];
+  $scope.allFlags = [
+    { name: "None", value: "none" }
+    , { name: "Blue", value: "blue" }
+    , { name: "Green", value: "green" }
+    , { name: "Yellow", value: "yellow" }
+    , { name: "Orange", value: "orange" }
+    , { name: "Purple", value: "purple" }
+    , { name: "Red", value: "red" }
+  ];
   $scope.initialize = function() {
     var data = localStorage.getItem('tiles');
     if (data !== null) {
       $scope.maps = JSON.parse(data);
       // for (var i in $scope.maps[0].tiles) {
-      //   $scope.maps[0].tiles[i].flag = 'none';
+      //   $scope.maps[0].tiles[i].poi = false;
       // }
     }
   };
-  $scope.rotateClockwise = function(str) {
-    var num = parseInt(str, 10);
+  $scope.rotateClockwise = function(tile) {
+    var num = parseInt(tile.rotate, 10);
     if (num === 270) {
-      return 0;
+      num = 0;
     } else {
-      return num + 90;
+      num = num + 90;
     }
+    tile.rotate = num;
+    $scope.saveMap();
   };
   $scope.saveMap = function() {
     localStorage.setItem('tiles', JSON.stringify($scope.maps));
@@ -45,13 +52,25 @@ var Main = function ($scope) {
     } else {
       return src + 1;
     }
+    $scope.saveMap();
   };
+  $scope.toggleGlobalFog = function() {
+    $scope.map.fog = !$scope.map.fog;
+    $scope.saveMap();
+  };
+  $scope.toggleFog = function(tile) {
+    tile.fog = !tile.fog;
+    $scope.saveMap();
+  };
+  $scope.togglePoi = function(tile) {
+    tile.poi = !tile.poi;
+    $scope.saveMap();
+  }
   $scope.addTile = function() {
-    $scope.$apply(function() {
-      $scope.maps[0].tiles.push({
-        src: 1, rotate: 0
-      });
+    $scope.maps[0].tiles.push({
+      src: 1, rotate: 0
     });
+    $('#tiles').sortable("refresh");
   };
   $scope.sortableOptions = {
     items: "> .tile"
@@ -60,106 +79,7 @@ var Main = function ($scope) {
 };
 var app = angular.module('dnd-tiles', ['ui.sortable']);
 app.controller('Main',['$scope','$http', Main]);
-app.directive('tlRotate', function () {
-  return {
-    replace: false,
-    transclude: false,
-    restrict: 'A',
-    scope: false,
-    link: function ($scope, element, attrs) {
-      element.on('click', function(e) {
-        var tileIndex = $('.tile').index(element.parent());
-        $scope.$apply(function() {
-          $scope.maps[0].tiles[tileIndex].rotate = $scope.rotateClockwise(attrs.tlRotate);
-          $scope.saveMap();
-        });
-      });
-    }
-  };
-});
-app.directive('tlSource', function () {
-  return {
-    replace: false,
-    transclude: false,
-    restrict: 'A',
-    scope: false,
-    link: function ($scope, element, attrs) {
-      element.on('change', function(e) {
-        var tileIndex = $('.tile').index(element.parent().parent());
-        $scope.$apply(function() {
-          $scope.maps[0].tiles[tileIndex].src = element.val();
-          $scope.saveMap();
-        });
-      });
-    }
-  };
-});
-app.directive('tlAddTile', function () {
-  return {
-    replace: false,
-    transclude: false,
-    restrict: 'A',
-    scope: false,
-    link: function ($scope, element, attrs) {
-      element.on('click', function(e) {
-        $scope.addTile();
-        $('#tiles').sortable("refresh");
-        $scope.saveMap();
-      });
-    }
-  };
-});
-app.directive('tlToggleGlobalFog', function () {
-  return {
-    replace: false,
-    transclude: false,
-    restrict: 'A',
-    scope: false,
-    link: function ($scope, element, attrs) {
-      element.on('click', function(e) {
-        $scope.$apply(function() {
-          $scope.map.fog = !$scope.map.fog;
-          $scope.saveMap();
-        });
-      });
-    }
-  };
-});
-app.directive('tlToggleFog', function () {
-  return {
-    replace: false,
-    transclude: false,
-    restrict: 'A',
-    scope: false,
-    link: function ($scope, element, attrs) {
-      element.on('click', function(e) {
-        var tileIndex = $('.tile').index(element.parent());
-        var fogStatus = $scope.maps[0].tiles[tileIndex].fog;
-        $scope.$apply(function() {
-          $scope.maps[0].tiles[tileIndex].fog = !fogStatus;
-        });
-        $scope.saveMap();
-      });
-    }
-  };
-});
-app.directive('tlSetFlag', function () {
-  return {
-    replace: false,
-    transclude: false,
-    restrict: 'A',
-    scope: false,
-    link: function ($scope, element, attrs) {
-      element.on('change', function(e) {
-        var tileIndex = $('.tile').index(element.parent().parent());
-        $scope.$apply(function() {
-          $scope.maps[0].tiles[tileIndex].flag = element.val();
-          $scope.saveMap();
-        });
-      });
-    }
-  };
-});
+
 app.directive('tlSortable', function () {
   return {
     replace: false,
